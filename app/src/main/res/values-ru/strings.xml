@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="my_trips_title">Мои путшествия</string>
+    <string name="add_trip_content_button_label">Новое путешествие</string>
+    <string name="trip_dates">С: %1$  по: %2$s</string>
+    <string name="trip_destination">Цель: %1$s</string>
+    <string name="save_button_label">Сохранить</string>
+    <string name="tripe_name_field">Название путешествия</string>
+    <string name="trip_destination_field">Цель</string>
+    <string name="trip_description_field">Описание</string>
+    <string name="trip_date_start_field">Дата начала (YYYY-MM-DD)</string>
+    <string name="trip_date_end_field">Дата конца (YYYY-MM-DD)</string>
+    <string name="back_button_label">Назад</string>
+    <string name="add_trip_title">Новое путешествие</string>
+</resources>

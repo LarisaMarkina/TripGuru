@@ -1,3 +1,15 @@
 <resources>
-    <string name="app_name">TripGuru</string>
+    <string name="app_name" translatable="false">TripGuru</string>
+    <string name="my_trips_title">My trips</string>
+    <string name="add_trip_content_button_label">New trip</string>
+    <string name="trip_dates">From: %1$s to: %2$s</string>
+    <string name="trip_destination">Destination: %1$s</string>
+    <string name="save_button_label">Save</string>
+    <string name="tripe_name_field">Trip name</string>
+    <string name="trip_destination_field">Destination</string>
+    <string name="trip_description_field">Description</string>
+    <string name="trip_date_start_field">Date start (YYYY-MM-DD)</string>
+    <string name="trip_date_end_field">Data end (YYYY-MM-DD)</string>
+    <string name="back_button_label">Back</string>
+    <string name="add_trip_title">New trip</string>
 </resources>

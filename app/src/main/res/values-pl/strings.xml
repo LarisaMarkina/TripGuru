@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="my_trips_title">Moje podróże</string>
+    <string name="add_trip_content_button_label">Nowa podróż</string>
+    <string name="trip_dates">Od: %1$s Do: %2$s</string>
+    <string name="trip_destination">Cel: %1$s</string>
+    <string name="save_button_label">Zapisz</string>
+    <string name="tripe_name_field">Nazwa podróży</string>
+    <string name="trip_destination_field">Cel</string>
+    <string name="trip_description_field">Opis</string>
+    <string name="trip_date_start_field">Data rozpoczęcia (YYYY-MM-DD)</string>
+    <string name="trip_date_end_field">Data zakończenia (YYYY-MM-DD)</string>
+    <string name="back_button_label">Anuluj</string>
+    <string name="add_trip_title">Nowa podróż</string>
+</resources>
