@@ -10,13 +10,18 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -40,8 +45,11 @@ import com.example.tripguru.presentation.trip.components.TripItem
 fun TripListScreen(
     viewModel: TripViewModel = hiltViewModel(),
     onAddTripClick: () -> Unit,
-    onTripClick: (Long) -> Unit
+    onTripClick: (Long) -> Unit,
+    snackBarMessage: String?,
+    onConsumeSnackBarMessage: () -> Unit
 ) {
+    val snackBarHostState = remember { SnackbarHostState() }
     val tripList by viewModel.trips.collectAsState()
 
     // Przy uruchomieniu ekranu, załaduj listę podróży
@@ -49,16 +57,31 @@ fun TripListScreen(
         viewModel.loadTrips()
     }
 
+    // Obsługa komunikatów snackBar
+    LaunchedEffect(snackBarMessage) {
+        if (snackBarMessage != null) {
+            snackBarHostState.showSnackbar(snackBarMessage)
+            onConsumeSnackBarMessage()
+        }
+    }
+
     Scaffold(
-        // Pasek górny z tytułem "Moje podróże"
+        snackbarHost = { SnackbarHost(snackBarHostState) },
         topBar = {
-            TopAppBar(title = {
+            TopAppBar(
+                title = {
                 Text(
                     stringResource(R.string.my_trips_title),
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold
                 )
-            })
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+            )
         },
         // Pływający przycisk do dodawania nowych podróży
         floatingActionButton = {

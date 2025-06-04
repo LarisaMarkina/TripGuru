@@ -12,4 +12,9 @@
     <string name="trip_date_end_field">Data end (YYYY-MM-DD)</string>
     <string name="back_button_label">Back</string>
     <string name="add_trip_title">New trip</string>
+    <string name="error_name_empty">Name is could not be empty!</string>
+    <string name="error_saving_trip">Error saving trip!</string>
+    <string name="trip_saved_successfully">Trip saved succesfully!</string>
+    <string name="unknown_error">Unknown error!</string>
+    <string name="action_label_ok">Ok</string>
 </resources>

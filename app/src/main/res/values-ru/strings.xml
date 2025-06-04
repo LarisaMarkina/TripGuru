@@ -12,4 +12,9 @@
     <string name="trip_date_end_field">Дата конца (YYYY-MM-DD)</string>
     <string name="back_button_label">Назад</string>
     <string name="add_trip_title">Новое путешествие</string>
+    <string name="error_name_empty">Название не может быть пустым!</string>
+    <string name="error_saving_trip">Ошибка при сохранении путешествия!</string>
+    <string name="trip_saved_successfully">Путешествие сохранено!</string>
+    <string name="unknown_error">Неизвестная ошибка!</string>
+    <string name="action_label_ok">Ok</string>
 </resources>

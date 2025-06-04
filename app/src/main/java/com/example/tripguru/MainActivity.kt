@@ -30,8 +30,18 @@ class MainActivity : ComponentActivity() {
                             startDestination = "trip_list"
                         ) {
                             composable("trip_list") {
+                                val snackbarMessage = navController.currentBackStackEntry
+                                    ?.savedStateHandle
+                                    ?.get<String>("snackbar_message")
+
                                 TripListScreen(
                                     onAddTripClick = { navController.navigate("add_trip") },
+                                    snackBarMessage = snackbarMessage,
+                                    onConsumeSnackBarMessage = {
+                                        navController.currentBackStackEntry
+                                            ?.savedStateHandle
+                                            ?.remove<String>("snackbar_message")
+                                    },
                                     onTripClick = { tripId ->
                                         // Możesz dodać szczegóły podróży w przyszłości
                                         println("Kliknięto podróż $tripId")
@@ -40,7 +50,12 @@ class MainActivity : ComponentActivity() {
                             }
                             composable("add_trip") {
                                 AddTripScreen(
-                                    onTripSaved = { navController.popBackStack() },
+                                    onNavigateBackWithResult = { message ->
+                                        navController.previousBackStackEntry
+                                            ?.savedStateHandle
+                                            ?.set("snackbar_message", message)
+                                        navController.popBackStack()
+                                    },
                                     onCancel = { navController.popBackStack() }
                                 )
                             }

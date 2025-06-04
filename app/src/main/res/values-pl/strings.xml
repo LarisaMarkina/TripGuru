@@ -12,4 +12,9 @@
     <string name="trip_date_end_field">Data zakończenia (YYYY-MM-DD)</string>
     <string name="back_button_label">Anuluj</string>
     <string name="add_trip_title">Nowa podróż</string>
+    <string name="error_name_empty">Nazwa nie może być pusta!</string>
+    <string name="error_saving_trip">Błąd zapisu podróży!</string>
+    <string name="trip_saved_successfully">Podróż pomyślnie zapisana!</string>
+    <string name="unknown_error">Nieznany błąd!</string>
+    <string name="action_label_ok">Ok</string>
 </resources>
