@@ -8,8 +8,6 @@
     <string name="tripe_name_field">Trip name</string>
     <string name="trip_destination_field">Destination</string>
     <string name="trip_description_field">Description</string>
-    <string name="trip_date_start_field">Date start (YYYY-MM-DD)</string>
-    <string name="trip_date_end_field">Data end (YYYY-MM-DD)</string>
     <string name="back_button_label">Back</string>
     <string name="add_trip_title">New trip</string>
     <string name="error_name_empty">Name is could not be empty!</string>
@@ -17,4 +15,13 @@
     <string name="trip_saved_successfully">Trip saved succesfully!</string>
     <string name="unknown_error">Unknown error!</string>
     <string name="action_label_ok">Ok</string>
+    <string name="select_start_date_description">"Select trip start date "</string>
+    <string name="trip_date_end_field">Trip finish date</string>
+    <string name="trip_date_start_field">Trip beginning date</string>
+    <string name="select_end_date_description">Select trip end date</string>
+    <string name="error_end_date_before_start_date">Ups! your trip is ending before beginning!</string>
+    <string name="empty_start_date_error">Choose your start date!</string>
+    <string name="empty_end_date_error">Choose your end date!</string>
+    <string name="clear_start_date_description">Clear trip start date</string>
+    <string name="clear_end_date_description">Clear trip end date</string>
 </resources>

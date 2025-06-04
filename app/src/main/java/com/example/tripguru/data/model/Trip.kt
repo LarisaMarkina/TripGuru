@@ -9,13 +9,15 @@ package com.example.tripguru.data.model
  * @property startDate
  * @property endDate
  * @property description
+ * @property createDate
  * @constructor Create empty Trip
  */
 data class Trip(
     val id: Long = 0L,
     val name: String,
-    val destination: String,
-    val startDate: String,
-    val endDate: String,
-    val description: String
+    val destination: String?,
+    val startDate: Long?,
+    val endDate: Long?,
+    val description: String?,
+    val createDate: Long = System.currentTimeMillis()
 )

@@ -21,44 +21,43 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            TripGuruTheme {
-                TripGuruTheme {
-                    Surface(modifier = Modifier.fillMaxSize()) {
-                        val navController = rememberNavController()
-                        NavHost(
-                            navController = navController,
-                            startDestination = "trip_list"
-                        ) {
-                            composable("trip_list") {
-                                val snackbarMessage = navController.currentBackStackEntry
-                                    ?.savedStateHandle
-                                    ?.get<String>("snackbar_message")
 
-                                TripListScreen(
-                                    onAddTripClick = { navController.navigate("add_trip") },
-                                    snackBarMessage = snackbarMessage,
-                                    onConsumeSnackBarMessage = {
-                                        navController.currentBackStackEntry
-                                            ?.savedStateHandle
-                                            ?.remove<String>("snackbar_message")
-                                    },
-                                    onTripClick = { tripId ->
-                                        // Możesz dodać szczegóły podróży w przyszłości
-                                        println("Kliknięto podróż $tripId")
-                                    }
-                                )
-                            }
-                            composable("add_trip") {
-                                AddTripScreen(
-                                    onNavigateBackWithResult = { message ->
-                                        navController.previousBackStackEntry
-                                            ?.savedStateHandle
-                                            ?.set("snackbar_message", message)
-                                        navController.popBackStack()
-                                    },
-                                    onCancel = { navController.popBackStack() }
-                                )
-                            }
+            TripGuruTheme {
+                Surface(modifier = Modifier.fillMaxSize()) {
+                    val navController = rememberNavController()
+                    NavHost(
+                        navController = navController,
+                        startDestination = AppRoutes.TRIP_LIST_ROUTE
+                    ) {
+                        composable(AppRoutes.TRIP_LIST_ROUTE) {
+                            val snackBarMessage = navController.currentBackStackEntry
+                                ?.savedStateHandle
+                                ?.get<String>("snackbar_message")
+
+                            TripListScreen(
+                                onAddTripClick = { navController.navigate(AppRoutes.ADD_TRIP_ROUTE) },
+                                snackBarMessage = snackBarMessage,
+                                onConsumeSnackBarMessage = {
+                                    navController.currentBackStackEntry
+                                        ?.savedStateHandle
+                                        ?.remove<String>("snackbar_message")
+                                },
+                                onTripClick = { tripId ->
+                                    // Możesz dodać szczegóły podróży w przyszłości
+                                    println("Kliknięto podróż $tripId")
+                                }
+                            )
+                        }
+                        composable(AppRoutes.ADD_TRIP_ROUTE) {
+                            AddTripScreen(
+                                onNavigateBackWithResult = { message ->
+                                    navController.previousBackStackEntry
+                                        ?.savedStateHandle
+                                        ?.set("snackbar_message", message)
+                                    navController.popBackStack()
+                                },
+                                onCancel = { navController.popBackStack() }
+                            )
                         }
                     }
                 }

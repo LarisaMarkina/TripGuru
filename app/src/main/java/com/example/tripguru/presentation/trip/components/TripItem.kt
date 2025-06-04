@@ -1,5 +1,6 @@
 package com.example.tripguru.presentation.trip.components
 
+import android.text.TextUtils.isEmpty
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -18,34 +19,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.tripguru.R
 import com.example.tripguru.data.model.Trip
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
-
-/**
- * Represents a trip with its details.
- *
- * @property id The unique identifier of the trip.
- * @property name The name of the trip.
- * @property destination The destination of the trip.
- */
 data class Trip(val id: Long, val name: String, val destination: String)
 
-/**
- * Composable function that displays a single trip item.
- *
- * This function takes a [Trip] object and an onClick lambda function as input.
- * It displays the trip's name, destination, dates, and description (if available) in a Card.
- * The Card is clickable and invokes the onClick lambda with the trip's ID when clicked.
- *
- * @param trip The [Trip] object to display.
- * @param onClick A lambda function to be invoked when the trip item is clicked. It receives the trip's ID.
- * @param modifier The modifier to be applied to the trip item.
- */
 @Composable
 fun TripItem(
     trip: Trip,
     onClick: (tripId: Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val dateFormatter = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
+
     Card(
         modifier = modifier
             .padding(8.dp)
@@ -54,12 +41,27 @@ fun TripItem(
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
+
+            // Nazwa podróży
             Text(trip.name, fontSize = 20.sp, fontWeight = FontWeight.Bold)
-            Text(text = stringResource(R.string.trip_destination, trip.destination))
-            Text(stringResource(R.string.trip_dates, trip.startDate, trip.endDate))
-            if (trip.description.isNotBlank()) {
+            Spacer(modifier = Modifier.height(2.dp))
+
+            // Cel podróży
+            if (!isEmpty(trip.destination)) {
+                trip.destination?.let { Text(text = stringResource(R.string.trip_destination, it)) }
+            }
+
+            // Daty podróży
+            if (trip.endDate != null && trip.startDate != null) {
+                val dateStartDisplay = dateFormatter.format(Date(trip.startDate))
+                val dateEndDisplay = dateFormatter.format(Date(trip.endDate))
+                Text(stringResource(R.string.trip_dates, dateStartDisplay, dateEndDisplay))
+            }
+
+            // Opis podróży
+            if (!isEmpty(trip.description)) {
                 Spacer(modifier = Modifier.height(4.dp))
-                Text(trip.description, fontStyle = FontStyle.Italic)
+                Text(trip.description.toString(), fontStyle = FontStyle.Italic)
             }
         }
     }

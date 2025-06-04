@@ -1,10 +1,13 @@
 package com.example.tripguru.presentation.trip
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -13,6 +16,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -31,16 +36,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.tripguru.R
+import com.example.tripguru.presentation.composables.rememberDatePickerDialog
+import java.util.Calendar
+import java.util.TimeZone
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
@@ -53,8 +64,40 @@ fun AddTripScreen(
     val context = LocalContext.current
     val snackBarHostState = remember { SnackbarHostState() }
     val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
 
-    // --- Nasłuchiwanie na eventy z ViewModelu ---
+    // Stany do kontrolowania widoczności DatePickerDialog
+    var showStartDatePicker by remember { mutableStateOf(false) }
+    var showEndDatePicker by remember { mutableStateOf(false) }
+
+    // Utwórz instancje DatePickerDialog dla daty rozpoczęcia i zakończenia
+    val startDatePickerDialog = rememberDatePickerDialog(
+        initialDate = viewModel.getInitialCalendarForDatePicker(formUiState.selectedStartDateMillis),
+        onDateSelected = { year, month, dayOfMonth ->
+            val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC")).apply {
+                clear()
+                set(year, month, dayOfMonth)
+            }
+            viewModel.onStartDateSelected(calendar.timeInMillis)
+            showStartDatePicker = false
+        },
+        onDismiss = { showStartDatePicker = false }
+    )
+
+    val endDatePickerDialog = rememberDatePickerDialog(
+        initialDate = viewModel.getInitialCalendarForDatePicker(formUiState.selectedEndDateMillis),
+        onDateSelected = { year, month, dayOfMonth ->
+            val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC")).apply {
+                clear()
+                set(year, month, dayOfMonth)
+            }
+            viewModel.onEndDateSelected(calendar.timeInMillis)
+            showEndDatePicker = false
+        },
+        onDismiss = { showEndDatePicker = false }
+    )
+
+    // Nasłuchiwanie na eventy z ViewModelu
     LaunchedEffect(key1 = Unit) {
         viewModel.eventFlow.collect { event ->
             when (event) {
@@ -79,10 +122,38 @@ fun AddTripScreen(
         }
     }
 
+    LaunchedEffect(showStartDatePicker) {
+        if (showStartDatePicker) {
+            startDatePickerDialog.show()
+            val initialCalendar =
+                viewModel.getInitialCalendarForDatePicker(formUiState.selectedStartDateMillis)
+            startDatePickerDialog.updateDate(
+                initialCalendar.get(Calendar.YEAR),
+                initialCalendar.get(Calendar.MONTH),
+                initialCalendar.get(Calendar.DAY_OF_MONTH)
+            )
+        }
+    }
+
+    LaunchedEffect(showEndDatePicker) {
+        if (showEndDatePicker) {
+            endDatePickerDialog.show()
+            val initialCalendar =
+                viewModel.getInitialCalendarForDatePicker(formUiState.selectedEndDateMillis)
+            endDatePickerDialog.updateDate(
+                initialCalendar.get(Calendar.YEAR),
+                initialCalendar.get(Calendar.MONTH),
+                initialCalendar.get(Calendar.DAY_OF_MONTH)
+            )
+        }
+    }
+
     // Główny ekran
     Scaffold(
         snackbarHost = { SnackbarHost(snackBarHostState) },
         topBar = {
+
+            // Nagłówek ekranu
             TopAppBar(
                 title = { Text(stringResource(R.string.add_trip_title)) },
                 navigationIcon = {
@@ -141,23 +212,98 @@ fun AddTripScreen(
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
             )
+            Spacer(modifier = Modifier.height(4.dp))
 
             // Data rozpoczęcia
             OutlinedTextField(
-                value = formUiState.startDate,
-                onValueChange = { viewModel.onStartDateChanged(it) },
+                value = formUiState.startDateDisplay,
+                onValueChange = {},
                 label = { Text(stringResource(R.string.trip_date_start_field)) },
-                modifier = Modifier.fillMaxWidth(),
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
+                readOnly = true,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        focusManager.clearFocus()
+                        showStartDatePicker = true
+                    },
+                trailingIcon = {
+                    Row {
+                        // Usuń datę
+                        if (formUiState.selectedStartDateMillis != null) {
+                            IconButton(onClick = { viewModel.clearStartDate() }) {
+                                Icon(
+                                    Icons.Filled.Clear,
+                                    contentDescription = stringResource(R.string.clear_start_date_description)
+                                )
+                            }
+                        }
+                        // Wybierz datę
+                        IconButton(onClick = {
+                            focusManager.clearFocus()
+                            showStartDatePicker = true
+                        }) {
+                            Icon(
+                                Icons.Filled.DateRange,
+                                contentDescription = stringResource(R.string.select_start_date_description)
+                            )
+                        }
+                    }
+                },
+                isError = formUiState.startDateError != null,
+                supportingText = {
+                    formUiState.startDateError?.let {
+                        Text(
+                            stringResource(it),
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
+                }
             )
 
             // Data zakończenia
             OutlinedTextField(
-                value = formUiState.endDate,
-                onValueChange = { viewModel.onEndDateChanged(it) },
+                value = formUiState.endDateDisplay,
+                onValueChange = {},
                 label = { Text(stringResource(R.string.trip_date_end_field)) },
-                modifier = Modifier.fillMaxWidth(),
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
+                readOnly = true,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        focusManager.clearFocus()
+                        showEndDatePicker = true
+                    },
+                trailingIcon = {
+                    Row {
+                        // Usuń datę
+                        if (formUiState.selectedEndDateMillis != null) {
+                            IconButton(onClick = { viewModel.clearEndDate() }) {
+                                Icon(
+                                    Icons.Filled.Clear,
+                                    contentDescription = stringResource(R.string.clear_end_date_description)
+                                )
+                            }
+                        }
+                        // Wybierz datę
+                        IconButton(onClick = {
+                            focusManager.clearFocus()
+                            showEndDatePicker = true
+                        }) {
+                            Icon(
+                                Icons.Filled.DateRange,
+                                contentDescription = stringResource(R.string.select_end_date_description)
+                            )
+                        }
+                    }
+                },
+                isError = formUiState.endDateError != null,
+                supportingText = {
+                    formUiState.endDateError?.let {
+                        Text(
+                            stringResource(it),
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
+                }
             )
 
             // Opis

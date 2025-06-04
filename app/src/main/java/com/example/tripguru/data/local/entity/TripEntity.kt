@@ -8,10 +8,11 @@ import com.example.tripguru.data.model.Trip
 data class TripEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0L,
     val name: String,
-    val destination: String,
-    val startDate: String,
-    val endDate: String,
-    val description: String
+    val destination: String?,
+    val startDate: Long?,
+    val endDate: Long?,
+    val description: String?,
+    val createDate: Long = System.currentTimeMillis()
 )
 
 fun TripEntity.toDomain(): Trip = Trip(

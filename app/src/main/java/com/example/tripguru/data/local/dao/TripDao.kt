@@ -21,7 +21,7 @@ interface TripDao {
     @Delete
     suspend fun deleteTrip(trip: TripEntity)
 
-    @Query("SELECT * FROM trips ORDER BY startDate ASC")
+    @Query("SELECT * FROM trips ORDER BY coalesce(startDate, createDate) DESC")
     fun getAllTrips(): Flow<List<TripEntity>>
 
     @Query("SELECT * FROM trips WHERE id = :tripId LIMIT 1")

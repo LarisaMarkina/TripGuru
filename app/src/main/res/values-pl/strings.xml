@@ -2,14 +2,12 @@
 <resources>
     <string name="my_trips_title">Moje podróże</string>
     <string name="add_trip_content_button_label">Nowa podróż</string>
-    <string name="trip_dates">Od: %1$s Do: %2$s</string>
+    <string name="trip_dates">Od: %1$s do: %2$s</string>
     <string name="trip_destination">Cel: %1$s</string>
     <string name="save_button_label">Zapisz</string>
     <string name="tripe_name_field">Nazwa podróży</string>
     <string name="trip_destination_field">Cel</string>
     <string name="trip_description_field">Opis</string>
-    <string name="trip_date_start_field">Data rozpoczęcia (YYYY-MM-DD)</string>
-    <string name="trip_date_end_field">Data zakończenia (YYYY-MM-DD)</string>
     <string name="back_button_label">Anuluj</string>
     <string name="add_trip_title">Nowa podróż</string>
     <string name="error_name_empty">Nazwa nie może być pusta!</string>
@@ -17,4 +15,13 @@
     <string name="trip_saved_successfully">Podróż pomyślnie zapisana!</string>
     <string name="unknown_error">Nieznany błąd!</string>
     <string name="action_label_ok">Ok</string>
+    <string name="select_start_date_description">Wybierz datę początku</string>
+    <string name="trip_date_end_field">Data zakończenia podróży</string>
+    <string name="trip_date_start_field">Data rozpoczęcia podróży</string>
+    <string name="select_end_date_description">Wybierz datę końca podróży</string>
+    <string name="error_end_date_before_start_date">Ups! Podróż kończy się przed rozpoczęciem!</string>
+    <string name="empty_start_date_error">Wybierz datę rozpoczęcia!</string>
+    <string name="empty_end_date_error">Wybierz datę zakończenia!</string>
+    <string name="clear_start_date_description">Wyczyść datę rozpoczęcia</string>
+    <string name="clear_end_date_description">Wyczyść datę zakończenia</string>
 </resources>
