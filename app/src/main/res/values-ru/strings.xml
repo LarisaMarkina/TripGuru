@@ -24,4 +24,9 @@
     <string name="content_desc_clear_start_date">Удали дату начала</string>
     <string name="content_desc_clear_end_date">Удали дату завершения</string>
     <string name="title_trip_details">Детали путешествия</string>
+    <string name="content_desc_menu">Меню</string>
+    <string name="button_label_delete">Удалить</string>
+    <string name="dialog_title_confirm_delete">Подтверждение удаления</string>
+    <string name="dialog_text_confirm_delete">Вы уверены, что хотите удалить путешествие?</string>
+    <string name="msg_success_trip_deleted">Путешествие удалено!</string>
 </resources>

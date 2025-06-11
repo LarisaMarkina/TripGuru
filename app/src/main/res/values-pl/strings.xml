@@ -24,4 +24,9 @@
     <string name="content_desc_clear_start_date">Wyczyść datę rozpoczęcia</string>
     <string name="content_desc_clear_end_date">Wyczyść datę zakończenia</string>
     <string name="title_trip_details">Szczegóły podróży</string>
+    <string name="content_desc_menu">Menu</string>
+    <string name="button_label_delete">Usuń</string>
+    <string name="dialog_title_confirm_delete">Potwierdzenie usuwania</string>
+    <string name="dialog_text_confirm_delete">Jesteś pewien, że chcesz usunąć podróż?</string>
+    <string name="msg_success_trip_deleted">Podróż została usunięta!</string>
 </resources>

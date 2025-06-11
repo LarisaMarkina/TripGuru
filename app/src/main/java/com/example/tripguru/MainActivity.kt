@@ -81,6 +81,12 @@ class MainActivity : ComponentActivity() {
                                 TripDetailsScreen(
                                     tripId = tripId,
                                     viewModel = hiltViewModel(),
+                                    onNavigateBackWithResult = { message ->
+                                        navController.previousBackStackEntry
+                                            ?.savedStateHandle
+                                            ?.set("snackbar_message", message)
+                                        navController.popBackStack()
+                                    },
                                     onCancel = { navController.popBackStack() }
                                 )
                             } else {
