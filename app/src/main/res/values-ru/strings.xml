@@ -10,6 +10,7 @@
     <string name="field_trip_description">Описание</string>
     <string name="button_label_back">Назад</string>
     <string name="title_add_trip">Новое путешествие</string>
+    <string name="button_label_edit">Изменить</string>
     <string name="msg_error_name_empty">Название не может быть пустым!</string>
     <string name="msg_error_saving_trip">Ошибка при сохранении путешествия!</string>
     <string name="msg_success_trip_saved">Путешествие сохранено!</string>

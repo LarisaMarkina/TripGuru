@@ -13,6 +13,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
@@ -59,18 +60,19 @@ fun TripDetailsScreen(
     tripId: Long,
     viewModel: TripViewModel = hiltViewModel(),
     onNavigateBackWithResult: (String) -> Unit,
+    onEditTrip: (Long) -> Unit,
     onCancel: () -> Unit
 ) {
+    LaunchedEffect(key1 = tripId) {
+        viewModel.loadTripDetails(tripId)
+    }
+
     val trip by viewModel.selectedTripDetails.collectAsState()
     val context = LocalContext.current
 
     var showMenu by remember { mutableStateOf(false) }
     var showDialog by remember { mutableStateOf(false) }
     val snackBarHostState = remember { SnackbarHostState() }
-
-    LaunchedEffect(key1 = tripId) {
-        viewModel.loadTripDetails(tripId)
-    }
 
     // Główny ekran
     Scaffold(
@@ -114,6 +116,24 @@ fun TripDetailsScreen(
                         expanded = showMenu,
                         onDismissRequest = { showMenu = false }
                     ) {
+
+                        // Edycja podróży
+                        DropdownMenuItem(
+                            text = { Text(stringResource(R.string.button_label_edit)) },
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = Icons.Filled.Edit,
+                                    contentDescription = null
+                                )
+                            },
+                            onClick = {
+                                showMenu = false
+                                viewModel.clearSelectedTrip()
+                                onEditTrip(tripId)
+                            }
+                        )
+
+                        // Usuwanie podróży
                         DropdownMenuItem(
                             text = { Text(stringResource(R.string.button_label_delete)) },
                             leadingIcon = {

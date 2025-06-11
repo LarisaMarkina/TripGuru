@@ -22,6 +22,7 @@
     <string name="button_label_save">Save</string>
     <string name="button_label_back">Back</string>
     <string name="button_label_delete">Delete</string>
+    <string name="button_label_edit">Edit</string>
 
     <!-- Messages -->
     <string name="msg_error_name_empty">Name is could not be empty!</string>
@@ -43,4 +44,5 @@
     <!-- Dialogs -->
     <string name="dialog_title_confirm_delete">Confirm deletion</string>
     <string name="dialog_text_confirm_delete">Are you sure you want to delete this trip?</string>
+
 </resources>

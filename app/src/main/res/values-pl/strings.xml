@@ -10,6 +10,7 @@
     <string name="field_trip_description">Opis</string>
     <string name="button_label_back">Anuluj</string>
     <string name="title_add_trip">Nowa podróż</string>
+    <string name="button_label_edit">Edytuj</string>
     <string name="msg_error_name_empty">Nazwa nie może być pusta!</string>
     <string name="msg_error_saving_trip">Błąd zapisu podróży!</string>
     <string name="msg_success_trip_saved">Podróż pomyślnie zapisana!</string>

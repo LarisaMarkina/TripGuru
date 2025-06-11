@@ -7,7 +7,6 @@ import com.example.tripguru.data.model.Trip
 import com.example.tripguru.domain.usecase.trip.TripUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -43,7 +42,8 @@ data class AddTripFormUiState(
     val description: String = "",
 
     val isSaving: Boolean = false,
-    val canBeSaved: Boolean = false
+    val canBeSaved: Boolean = false,
+    val editingTripId: Long? = null
 )
 
 /**
@@ -387,13 +387,20 @@ class TripViewModel @Inject constructor(
             viewModelScope.launch {
                 try {
                     val trip = Trip(
+                        id = currentState.editingTripId ?: 0,
                         name = currentState.name.trim(),
                         destination = currentState.destination.trim(),
                         startDate = currentState.selectedStartDateMillis,
                         endDate = currentState.selectedEndDateMillis,
                         description = currentState.description.trim()
                     )
-                    tripUseCases.addTrip(trip)
+
+                    if (isEditingExistingTrip()) {
+                        tripUseCases.updateTrip(trip)
+                    } else {
+                        tripUseCases.addTrip(trip)
+                    }
+
                     _eventFlow.emit(AddTripEvent.SaveSuccessAndPrepareToNavigateBack)
                 } catch (e: Exception) {
                     _eventFlow.emit(
@@ -409,10 +416,15 @@ class TripViewModel @Inject constructor(
         }
     }
 
+    private fun isEditingExistingTrip(): Boolean {
+        return _addTripFormState.value.editingTripId != null
+    }
+
     fun loadTripForEditing(trip: Trip) {
         val (startDateError, endDateError) = validateDates(trip.startDate, trip.endDate)
         _addTripFormState.update {
             it.copy(
+                editingTripId = trip.id,
                 name = trip.name,
                 destination = trip.destination ?: "",
                 selectedStartDateMillis = trip.startDate,
@@ -444,6 +456,10 @@ class TripViewModel @Inject constructor(
         _selectedTripId.value = tripId
     }
 
+    fun clearSelectedTrip() {
+        _selectedTripId.value = null
+    }
+
     fun loadTrips() {
         viewModelScope.launch {
             tripUseCases.getTrips().collect {
@@ -456,16 +472,6 @@ class TripViewModel @Inject constructor(
         viewModelScope.launch {
             tripUseCases.deleteTrip(trip)
         }
-    }
-
-    fun updateTrip(trip: Trip) {
-        viewModelScope.launch {
-            tripUseCases.updateTrip(trip)
-        }
-    }
-
-    fun getTripById(id: Long): Flow<Trip?> {
-        return tripUseCases.getTripById(id)
     }
 }
 
