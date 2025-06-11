@@ -1,27 +1,39 @@
 <resources>
     <string name="app_name" translatable="false">TripGuru</string>
-    <string name="my_trips_title">My trips</string>
-    <string name="add_trip_content_button_label">New trip</string>
-    <string name="trip_dates">From: %1$s to: %2$s</string>
-    <string name="trip_destination">Destination: %1$s</string>
-    <string name="save_button_label">Save</string>
-    <string name="tripe_name_field">Trip name</string>
-    <string name="trip_destination_field">Destination</string>
-    <string name="trip_description_field">Description</string>
-    <string name="back_button_label">Back</string>
-    <string name="add_trip_title">New trip</string>
-    <string name="error_name_empty">Name is could not be empty!</string>
-    <string name="error_saving_trip">Error saving trip!</string>
-    <string name="trip_saved_successfully">Trip saved succesfully!</string>
-    <string name="unknown_error">Unknown error!</string>
-    <string name="action_label_ok">Ok</string>
-    <string name="select_start_date_description">"Select trip start date "</string>
-    <string name="trip_date_end_field">Trip finish date</string>
-    <string name="trip_date_start_field">Trip beginning date</string>
-    <string name="select_end_date_description">Select trip end date</string>
-    <string name="error_end_date_before_start_date">Ups! your trip is ending before beginning!</string>
-    <string name="empty_start_date_error">Choose your start date!</string>
-    <string name="empty_end_date_error">Choose your end date!</string>
-    <string name="clear_start_date_description">Clear trip start date</string>
-    <string name="clear_end_date_description">Clear trip end date</string>
+
+    <!-- Titles -->
+    <string name="title_my_trips">My trips</string>
+    <string name="title_add_trip">New trip</string>
+    <string name="title_trip_details">Trip details</string>
+
+    <!-- Labels -->
+    <string name="label_trip_dates">From: %1$s to: %2$s</string>
+    <string name="label_trip_destination">Destination: %1$s</string>
+
+    <!-- Fields -->
+    <string name="field_trip_name">Trip name</string>
+    <string name="field_trip_destination">Destination</string>
+    <string name="field_trip_description">Description</string>
+    <string name="field_trip_date_end">Trip finish date</string>
+    <string name="field_trip_date_start">Trip beginning date</string>
+
+    <!-- Buttons -->
+    <string name="button_label_add_trip_content">New trip</string>
+    <string name="button_label_save">Save</string>
+    <string name="button_label_back">Back</string>
+
+    <!-- Messages -->
+    <string name="msg_error_name_empty">Name is could not be empty!</string>
+    <string name="msg_error_saving_trip">Error saving trip!</string>
+    <string name="msg_success_trip_saved">Trip saved successfully!</string>
+    <string name="msg_error_unknown">Unknown error!</string>
+    <string name="msg_error_end_date_before_start_date">Ups! your trip is ending before beginning!</string>
+    <string name="msg_error_empty_start_date">Choose your start date!</string>
+    <string name="msg_error_empty_end_date">Choose your end date!</string>
+
+    <!-- Content description -->
+    <string name="content_desc_select_start_date">Select trip start date</string>
+    <string name="content_desc_select_end_date">Select trip end date</string>
+    <string name="content_desc_clear_start_date">Clear trip start date</string>
+    <string name="content_desc_clear_end_date">Clear trip end date</string>
 </resources>

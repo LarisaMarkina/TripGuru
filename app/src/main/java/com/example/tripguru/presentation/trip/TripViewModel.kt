@@ -6,11 +6,18 @@ import com.example.tripguru.R
 import com.example.tripguru.data.model.Trip
 import com.example.tripguru.domain.usecase.trip.TripUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -57,6 +64,20 @@ class TripViewModel @Inject constructor(
     private val _trips = MutableStateFlow<List<Trip>>(emptyList())
     val trips: StateFlow<List<Trip>> = _trips.asStateFlow()
 
+    private val _selectedTripId = MutableStateFlow<Long?>(null)
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val selectedTripDetails: StateFlow<Trip?> =
+        _selectedTripId.filterNotNull().flatMapLatest { id ->
+            tripUseCases.getTripById(id).catch { exception ->
+                emit(null)
+            }
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000L),
+            initialValue = null // Początkowa wartość, UI pokaże ładowanie
+        )
+
     private val _addTripFormState = MutableStateFlow(AddTripFormUiState())
     val addTripFormState: StateFlow<AddTripFormUiState> = _addTripFormState.asStateFlow()
 
@@ -64,6 +85,7 @@ class TripViewModel @Inject constructor(
     val eventFlow = _eventFlow.asSharedFlow()
 
     private val dateFormatter = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
+
 
 // --------- Funkcje do aktualizacji stanu formularza ---------
     /**
@@ -75,9 +97,7 @@ class TripViewModel @Inject constructor(
         _addTripFormState.update { currentState ->
             val error = validateName(newName)
             currentState.copy(
-                name = newName,
-                nameError = error,
-                canBeSaved = canFormBeSaved(
+                name = newName, nameError = error, canBeSaved = canFormBeSaved(
                     name = newName,
                     nameError = error,
                     startDateError = currentState.startDateError,
@@ -95,8 +115,7 @@ class TripViewModel @Inject constructor(
     fun onDestinationChanged(newDestination: String) {
         _addTripFormState.update { currentState ->
             currentState.copy(
-                destination = newDestination,
-                canBeSaved = canFormBeSaved(
+                destination = newDestination, canBeSaved = canFormBeSaved(
                     name = currentState.name,
                     nameError = currentState.nameError,
                     startDateError = currentState.startDateError,
@@ -168,8 +187,7 @@ class TripViewModel @Inject constructor(
     fun onDescriptionChanged(newDescription: String) {
         _addTripFormState.update { currentState ->
             currentState.copy(
-                description = newDescription,
-                canBeSaved = canFormBeSaved(
+                description = newDescription, canBeSaved = canFormBeSaved(
                     name = currentState.name,
                     nameError = currentState.nameError,
                     startDateError = currentState.startDateError,
@@ -189,7 +207,7 @@ class TripViewModel @Inject constructor(
      */
     private fun validateName(name: String): Int? {
         if (name.isBlank()) {
-            return R.string.error_name_empty
+            return R.string.msg_error_name_empty
         }
         return null
     }
@@ -208,17 +226,17 @@ class TripViewModel @Inject constructor(
         when {
             startDateMillis != null && endDateMillis != null -> {
                 if (startDateMillis > endDateMillis) {
-                    endDateError = R.string.error_end_date_before_start_date
+                    endDateError = R.string.msg_error_end_date_before_start_date
                 }
             }
 
             startDateMillis == null && endDateMillis != null -> {
-                startDateError = R.string.empty_start_date_error
+                startDateError = R.string.msg_error_empty_start_date
                 endDateError = null
             }
 
             startDateMillis != null && endDateMillis == null -> {
-                endDateError = R.string.empty_end_date_error
+                endDateError = R.string.msg_error_empty_end_date
                 startDateError = null
             }
         }
@@ -235,9 +253,7 @@ class TripViewModel @Inject constructor(
      * @return - Błąd daty lub null
      */
     private fun validateSpecificDate(
-        dateToCheckMillis: Long?,
-        otherDateMillis: Long?,
-        isCheckingStartDate: Boolean
+        dateToCheckMillis: Long?, otherDateMillis: Long?, isCheckingStartDate: Boolean
     ): Int? {
         val (startError, endError) = if (isCheckingStartDate) {
             validateDates(dateToCheckMillis, otherDateMillis)
@@ -281,8 +297,7 @@ class TripViewModel @Inject constructor(
     fun clearEndDate() {
         _addTripFormState.update { currentState ->
             val (startDateErr, endDateErr) = validateDates(
-                currentState.selectedStartDateMillis,
-                null
+                currentState.selectedStartDateMillis, null
             )
 
             currentState.copy(
@@ -325,10 +340,7 @@ class TripViewModel @Inject constructor(
      * @return - Czy formularz jest gotowy do zapisu
      */
     private fun canFormBeSaved(
-        name: String,
-        nameError: Int?,
-        startDateError: Int?,
-        endDateError: Int?
+        name: String, nameError: Int?, startDateError: Int?, endDateError: Int?
     ): Boolean {
         val basicValidation = name.isNotBlank() && nameError == null
         val dateValidation = startDateError == null && endDateError == null
@@ -353,8 +365,7 @@ class TripViewModel @Inject constructor(
 
         val nameValidationError = validateName(currentState.name)
         val (startDateValError, endDateValError) = validateDates(
-            currentState.selectedStartDateMillis,
-            currentState.selectedEndDateMillis
+            currentState.selectedStartDateMillis, currentState.selectedEndDateMillis
         )
 
         _addTripFormState.update {
@@ -363,7 +374,8 @@ class TripViewModel @Inject constructor(
                 startDateError = startDateValError,
                 endDateError = endDateValError,
                 canBeSaved = canFormBeSaved(
-                    name = it.name, nameError = nameValidationError,
+                    name = it.name,
+                    nameError = nameValidationError,
                     startDateError = startDateValError,
                     endDateError = endDateValError
                 )
@@ -386,7 +398,7 @@ class TripViewModel @Inject constructor(
                 } catch (e: Exception) {
                     _eventFlow.emit(
                         AddTripEvent.SaveError(
-                            messageResId = R.string.error_saving_trip,
+                            messageResId = R.string.msg_error_saving_trip,
                             customMessage = e.localizedMessage
                         )
                     )
@@ -414,12 +426,22 @@ class TripViewModel @Inject constructor(
                 endDateError = endDateError,
                 isSaving = false,
                 canBeSaved = canFormBeSaved(
-                    name = trip.name, nameError = null,
+                    name = trip.name,
+                    nameError = null,
                     startDateError = startDateError,
                     endDateError = endDateError
-                )
-            )
+                ))
         }
+    }
+
+    /**
+     * Informuje ViewModel, które ID podróży ma zostać załadowane.
+     * Uruchamia przepływ w selectedTripDetails.
+     *
+     * @param tripId - id podróży
+     */
+    fun loadTripDetails(tripId: Long) {
+        _selectedTripId.value = tripId
     }
 
     fun loadTrips() {
@@ -442,7 +464,7 @@ class TripViewModel @Inject constructor(
         }
     }
 
-    suspend fun getTripById(id: Long): Trip? {
+    fun getTripById(id: Long): Flow<Trip?> {
         return tripUseCases.getTripById(id)
     }
 }

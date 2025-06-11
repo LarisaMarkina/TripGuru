@@ -7,11 +7,15 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.tripguru.presentation.theme.TripGuruTheme
 import com.example.tripguru.presentation.trip.AddTripScreen
+import com.example.tripguru.presentation.trip.TripDetailsScreen
 import com.example.tripguru.presentation.trip.TripListScreen
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -29,6 +33,7 @@ class MainActivity : ComponentActivity() {
                         navController = navController,
                         startDestination = AppRoutes.TRIP_LIST_ROUTE
                     ) {
+                        // Lista podróży
                         composable(AppRoutes.TRIP_LIST_ROUTE) {
                             val snackBarMessage = navController.currentBackStackEntry
                                 ?.savedStateHandle
@@ -43,11 +48,15 @@ class MainActivity : ComponentActivity() {
                                         ?.remove<String>("snackbar_message")
                                 },
                                 onTripClick = { tripId ->
-                                    // Możesz dodać szczegóły podróży w przyszłości
-                                    println("Kliknięto podróż $tripId")
+                                    navController.navigate(
+                                        AppRoutes.tripDetailsRoute(
+                                            tripId
+                                        )
+                                    )
                                 }
                             )
                         }
+                        // Dodaj podróż
                         composable(AppRoutes.ADD_TRIP_ROUTE) {
                             AddTripScreen(
                                 onNavigateBackWithResult = { message ->
@@ -58,6 +67,25 @@ class MainActivity : ComponentActivity() {
                                 },
                                 onCancel = { navController.popBackStack() }
                             )
+                        }
+                        // Pokaż podróż
+                        composable(
+                            route = AppRoutes.SHOW_TRIP_ROUTE,
+                            arguments = listOf(navArgument(AppRoutes.SHOW_TRIP_ARG_ID) {
+                                type = NavType.LongType
+                            })
+                        ) { backStackEntry ->
+                            val tripId =
+                                backStackEntry.arguments?.getLong(AppRoutes.SHOW_TRIP_ARG_ID)
+                            if (tripId != null) {
+                                TripDetailsScreen(
+                                    tripId = tripId,
+                                    viewModel = hiltViewModel(),
+                                    onCancel = { navController.popBackStack() }
+                                )
+                            } else {
+                                navController.popBackStack()
+                            }
                         }
                     }
                 }

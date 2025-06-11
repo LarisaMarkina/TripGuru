@@ -25,6 +25,6 @@ interface TripDao {
     fun getAllTrips(): Flow<List<TripEntity>>
 
     @Query("SELECT * FROM trips WHERE id = :tripId LIMIT 1")
-    suspend fun getTripById(tripId: Long): TripEntity?
+    fun getTripById(tripId: Long): Flow<TripEntity>
 
 }

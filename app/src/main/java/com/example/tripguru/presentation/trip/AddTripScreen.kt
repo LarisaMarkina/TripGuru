@@ -105,7 +105,7 @@ fun AddTripScreen(
                     val errorMessage = if (event.messageResId != null) {
                         context.getString(event.messageResId)
                     } else {
-                        event.customMessage ?: context.getString(R.string.unknown_error)
+                        event.customMessage ?: context.getString(R.string.msg_error_unknown)
                     }
                     snackBarHostState.showSnackbar(
                         message = errorMessage,
@@ -116,7 +116,7 @@ fun AddTripScreen(
                 is AddTripEvent.SaveSuccessAndPrepareToNavigateBack -> {
                     keyboardController?.hide()
                     viewModel.clearFormState()
-                    onNavigateBackWithResult(context.getString(R.string.trip_saved_successfully))
+                    onNavigateBackWithResult(context.getString(R.string.msg_success_trip_saved))
                 }
             }
         }
@@ -155,7 +155,7 @@ fun AddTripScreen(
 
             // Nagłówek ekranu
             TopAppBar(
-                title = { Text(stringResource(R.string.add_trip_title)) },
+                title = { Text(stringResource(R.string.title_add_trip)) },
                 navigationIcon = {
                     IconButton(onClick = {
                         keyboardController?.hide()
@@ -164,7 +164,7 @@ fun AddTripScreen(
                     }) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.back_button_label)
+                            contentDescription = stringResource(R.string.button_label_back)
                         )
                     }
                 },
@@ -189,7 +189,7 @@ fun AddTripScreen(
             OutlinedTextField(
                 value = formUiState.name,
                 onValueChange = { viewModel.onNameChanged(it) },
-                label = { Text(stringResource(R.string.tripe_name_field)) },
+                label = { Text(stringResource(R.string.field_trip_name)) },
                 modifier = Modifier.fillMaxWidth(),
                 isError = formUiState.nameError != null,
                 supportingText = {
@@ -208,7 +208,7 @@ fun AddTripScreen(
             OutlinedTextField(
                 value = formUiState.destination,
                 onValueChange = { viewModel.onDestinationChanged(it) },
-                label = { Text(stringResource(R.string.trip_destination_field)) },
+                label = { Text(stringResource(R.string.field_trip_destination)) },
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
             )
@@ -218,7 +218,7 @@ fun AddTripScreen(
             OutlinedTextField(
                 value = formUiState.startDateDisplay,
                 onValueChange = {},
-                label = { Text(stringResource(R.string.trip_date_start_field)) },
+                label = { Text(stringResource(R.string.field_trip_date_start)) },
                 readOnly = true,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -233,7 +233,7 @@ fun AddTripScreen(
                             IconButton(onClick = { viewModel.clearStartDate() }) {
                                 Icon(
                                     Icons.Filled.Clear,
-                                    contentDescription = stringResource(R.string.clear_start_date_description)
+                                    contentDescription = stringResource(R.string.content_desc_clear_start_date)
                                 )
                             }
                         }
@@ -244,7 +244,7 @@ fun AddTripScreen(
                         }) {
                             Icon(
                                 Icons.Filled.DateRange,
-                                contentDescription = stringResource(R.string.select_start_date_description)
+                                contentDescription = stringResource(R.string.content_desc_select_start_date)
                             )
                         }
                     }
@@ -264,7 +264,7 @@ fun AddTripScreen(
             OutlinedTextField(
                 value = formUiState.endDateDisplay,
                 onValueChange = {},
-                label = { Text(stringResource(R.string.trip_date_end_field)) },
+                label = { Text(stringResource(R.string.field_trip_date_end)) },
                 readOnly = true,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -279,7 +279,7 @@ fun AddTripScreen(
                             IconButton(onClick = { viewModel.clearEndDate() }) {
                                 Icon(
                                     Icons.Filled.Clear,
-                                    contentDescription = stringResource(R.string.clear_end_date_description)
+                                    contentDescription = stringResource(R.string.content_desc_clear_end_date)
                                 )
                             }
                         }
@@ -290,7 +290,7 @@ fun AddTripScreen(
                         }) {
                             Icon(
                                 Icons.Filled.DateRange,
-                                contentDescription = stringResource(R.string.select_end_date_description)
+                                contentDescription = stringResource(R.string.content_desc_select_end_date)
                             )
                         }
                     }
@@ -310,7 +310,7 @@ fun AddTripScreen(
             OutlinedTextField(
                 value = formUiState.description,
                 onValueChange = { viewModel.onDescriptionChanged(it) },
-                label = { Text(stringResource(R.string.trip_description_field)) },
+                label = { Text(stringResource(R.string.field_trip_description)) },
                 modifier = Modifier.fillMaxWidth(),
                 minLines = 3,
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
@@ -335,7 +335,7 @@ fun AddTripScreen(
                         color = MaterialTheme.colorScheme.onPrimary
                     )
                 } else {
-                    Text(stringResource(R.string.save_button_label))
+                    Text(stringResource(R.string.button_label_save))
                 }
             }
         }

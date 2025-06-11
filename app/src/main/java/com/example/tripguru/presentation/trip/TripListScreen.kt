@@ -1,12 +1,20 @@
 package com.example.tripguru.presentation.trip
 
+import android.text.TextUtils.isEmpty
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -29,7 +37,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.tripguru.R
-import com.example.tripguru.presentation.trip.components.TripItem
+import com.example.tripguru.data.model.Trip
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 /**
  * Trip list screen.
@@ -52,7 +63,7 @@ fun TripListScreen(
     val snackBarHostState = remember { SnackbarHostState() }
     val tripList by viewModel.trips.collectAsState()
 
-    // Przy uruchomieniu ekranu, załaduj listę podróży
+    // Ładowanie listy podróży
     LaunchedEffect(true) {
         viewModel.loadTrips()
     }
@@ -71,7 +82,7 @@ fun TripListScreen(
             TopAppBar(
                 title = {
                 Text(
-                    stringResource(R.string.my_trips_title),
+                    stringResource(R.string.title_my_trips),
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -88,7 +99,7 @@ fun TripListScreen(
             FloatingActionButton(onClick = onAddTripClick) {
                 Icon(
                     Icons.Default.Add,
-                    contentDescription = stringResource(R.string.add_trip_content_button_label)
+                    contentDescription = stringResource(R.string.button_label_add_trip_content)
                 )
             }
         }
@@ -106,7 +117,55 @@ fun TripListScreen(
                 items = tripList,
                 key = { trip -> trip.id }
             ) { trip ->
-                TripItem(trip = trip, onClick = { onTripClick(trip.id) })
+                TripItem(
+                    trip = trip,
+                    onClick = {
+                        onTripClick(trip.id)
+                    }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun TripItem(
+    trip: Trip,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val dateFormatter = remember { SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()) }
+
+    Card(
+        modifier = modifier
+            .padding(8.dp)
+            .fillMaxWidth()
+            .clickable { onClick() },
+        elevation = CardDefaults.cardElevation(4.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+
+            // Nazwa podróży
+            Text(trip.name, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+            Spacer(modifier = Modifier.height(2.dp))
+
+            // Cel podróży
+            if (!isEmpty(trip.destination)) {
+                trip.destination?.let {
+                    Text(
+                        text = stringResource(
+                            R.string.label_trip_destination,
+                            it
+                        )
+                    )
+                }
+            }
+
+            // Daty podróży
+            if (trip.endDate != null && trip.startDate != null) {
+                val dateStartDisplay = dateFormatter.format(Date(trip.startDate))
+                val dateEndDisplay = dateFormatter.format(Date(trip.endDate))
+                Text(stringResource(R.string.label_trip_dates, dateStartDisplay, dateEndDisplay))
             }
         }
     }

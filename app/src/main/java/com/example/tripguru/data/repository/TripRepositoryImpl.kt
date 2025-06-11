@@ -17,8 +17,8 @@ class TripRepositoryImpl @Inject constructor(
         return tripDao.getAllTrips().map { trips -> trips.map { it.toDomain() } }
     }
 
-    override suspend fun getTripById(id: Long): Trip? {
-        return tripDao.getTripById(id)?.toDomain()
+    override fun getTripById(id: Long): Flow<Trip?> {
+        return tripDao.getTripById(id).map { trip -> trip.toDomain() }
     }
 
     override suspend fun insertTrip(trip: Trip): Long {
