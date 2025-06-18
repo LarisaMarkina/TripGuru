@@ -9,6 +9,7 @@
     <!-- Labels -->
     <string name="label_trip_dates">From: %1$s to: %2$s</string>
     <string name="label_trip_destination">Destination: %1$s</string>
+    <string name="label_trip_number_of_participants">Number of participants: %1$s</string>
 
     <!-- Fields -->
     <string name="field_trip_name">Trip name</string>
@@ -16,6 +17,7 @@
     <string name="field_trip_description">Description</string>
     <string name="field_trip_date_end">Trip finish date</string>
     <string name="field_trip_date_start">Trip beginning date</string>
+    <string name="field_trip_number_of_participants">Number of participants</string>
 
     <!-- Buttons -->
     <string name="button_label_add_trip_content">New trip</string>
@@ -33,6 +35,8 @@
     <string name="msg_error_empty_start_date">Choose your start date!</string>
     <string name="msg_error_empty_end_date">Choose your end date!</string>
     <string name="msg_success_trip_deleted">The trip has been deleted</string>
+    <string name="msg_error_invalid_number_format">This field cannot be empty!</string>
+    <string name="msg_error_number_of_participants_too_low">There should be at least 1 participant on the trip!!</string>
 
     <!-- Content description -->
     <string name="content_desc_select_start_date">Select trip start date</string>
@@ -40,6 +44,8 @@
     <string name="content_desc_clear_start_date">Clear trip start date</string>
     <string name="content_desc_clear_end_date">Clear trip end date</string>
     <string name="content_desc_menu">Menu</string>
+    <string name="content_desc_decrement_participants">Decrement participant</string>
+    <string name="content_desc_increment_participants">Increment participant</string>
 
     <!-- Dialogs -->
     <string name="dialog_title_confirm_delete">Confirm deletion</string>

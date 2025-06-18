@@ -7,7 +7,7 @@ import com.example.tripguru.data.local.entity.TripEntity
 
 @Database(
     entities = [TripEntity::class],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class TripDatabase : RoomDatabase() {

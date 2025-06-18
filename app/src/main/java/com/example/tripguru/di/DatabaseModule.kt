@@ -27,7 +27,9 @@ object DatabaseModule {
             appContext,
             TripDatabase::class.java,
             "trip_guru_database"
-        ).build()
+        )
+            .fallbackToDestructiveMigration(false)
+            .build()
     }
 
     @Provides

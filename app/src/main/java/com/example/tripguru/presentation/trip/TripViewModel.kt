@@ -31,6 +31,9 @@ data class AddTripFormUiState(
 
     val destination: String = "",
 
+    val participantsNumber: String = "1",
+    val participantsNumberError: Int? = null,
+
     val selectedStartDateMillis: Long? = null,
     val startDateDisplay: String = "",
     val startDateError: Int? = null,
@@ -101,7 +104,8 @@ class TripViewModel @Inject constructor(
                     name = newName,
                     nameError = error,
                     startDateError = currentState.startDateError,
-                    endDateError = currentState.endDateError
+                    endDateError = currentState.endDateError,
+                    participantsNumberError = currentState.participantsNumberError
                 )
             )
         }
@@ -119,7 +123,8 @@ class TripViewModel @Inject constructor(
                     name = currentState.name,
                     nameError = currentState.nameError,
                     startDateError = currentState.startDateError,
-                    endDateError = currentState.endDateError
+                    endDateError = currentState.endDateError,
+                    participantsNumberError = currentState.participantsNumberError
                 )
             )
         }
@@ -147,6 +152,7 @@ class TripViewModel @Inject constructor(
                     nameError = currentState.nameError,
                     startDateError = startDateValError,
                     endDateError = endDateValError,
+                    participantsNumberError = currentState.participantsNumberError
                 )
             )
         }
@@ -174,6 +180,29 @@ class TripViewModel @Inject constructor(
                     nameError = currentState.nameError,
                     startDateError = startDateValError,
                     endDateError = endDateValError,
+                    participantsNumberError = currentState.participantsNumberError
+                )
+            )
+        }
+    }
+
+    /**
+     * Funkcja, reagująca na zmianę liczby uczestników podróży
+     *
+     * @param newParticipantsNumber
+     */
+    fun onNumberOfPeopleChanged(newParticipantsNumber: String) {
+        _addTripFormState.update { currentState ->
+            val error = validateParticipantsNumber(newParticipantsNumber)
+            currentState.copy(
+                participantsNumber = newParticipantsNumber,
+                participantsNumberError = error,
+                canBeSaved = canFormBeSaved(
+                    name = currentState.name,
+                    nameError = currentState.nameError,
+                    startDateError = currentState.startDateError,
+                    endDateError = currentState.endDateError,
+                    participantsNumberError = error,
                 )
             )
         }
@@ -191,7 +220,8 @@ class TripViewModel @Inject constructor(
                     name = currentState.name,
                     nameError = currentState.nameError,
                     startDateError = currentState.startDateError,
-                    endDateError = currentState.endDateError
+                    endDateError = currentState.endDateError,
+                    participantsNumberError = currentState.participantsNumberError
                 )
             )
         }
@@ -263,6 +293,21 @@ class TripViewModel @Inject constructor(
         return if (isCheckingStartDate) startError else endError
     }
 
+    /**
+     * Funkcja pomocnicza do walidacji liczby uczestników podróży
+     *
+     * @param participantsNumber - liczba uczestników podróży
+     * @return - Błąd liczby uczestników lub null
+     */
+    private fun validateParticipantsNumber(participantsNumber: String): Int? {
+        val number = participantsNumber.toIntOrNull()
+        return when {
+            number == null -> R.string.msg_error_invalid_number_format
+            number < 1 -> R.string.msg_error_number_of_participants_too_low
+            else -> null
+        }
+    }
+
 // --------- Funkcje do obsługi wyboru dat ---------
 
     /**
@@ -284,7 +329,8 @@ class TripViewModel @Inject constructor(
                     name = currentState.name,
                     nameError = currentState.nameError,
                     startDateError = startDateErr,
-                    endDateError = endDateErr
+                    endDateError = endDateErr,
+                    participantsNumberError = currentState.participantsNumberError
                 )
             )
         }
@@ -311,7 +357,8 @@ class TripViewModel @Inject constructor(
                     name = currentState.name,
                     nameError = currentState.nameError,
                     startDateError = startDateErr,
-                    endDateError = endDateErr
+                    endDateError = endDateErr,
+                    participantsNumberError = currentState.participantsNumberError
                 )
             )
         }
@@ -331,21 +378,77 @@ class TripViewModel @Inject constructor(
         return calendar
     }
 
+    // --------- Funkcje do obsługi wyboru liczby uczestników ---------
+
+    /**
+     * Funkcja, zwiększająca o 1 liczbę osób w podróży
+     *
+     */
+    fun incrementNumberOfPeople() {
+        _addTripFormState.update { currentState ->
+            val currentNumber = currentState.participantsNumber.toIntOrNull() ?: 1
+            val newNumber = (currentNumber + 1).coerceAtMost(1000) // Ogranicz do 1000
+            val newNumberString = newNumber.toString()
+            val error = validateParticipantsNumber(newNumberString)
+            currentState.copy(
+                participantsNumber = newNumberString,
+                participantsNumberError = error,
+                canBeSaved = canFormBeSaved(
+                    name = currentState.name,
+                    nameError = currentState.nameError,
+                    startDateError = currentState.startDateError,
+                    endDateError = currentState.endDateError,
+                    participantsNumberError = error,
+                )
+            )
+        }
+    }
+
+    /**
+     * Funkcja, zmniejszająca o 1 liczbę osób w podróży
+     *
+     */
+    fun decrementNumberOfPeople() {
+        _addTripFormState.update { currentState ->
+            val currentNumber = currentState.participantsNumber.toIntOrNull() ?: 1
+            val newNumber = (currentNumber - 1).coerceAtLeast(1) // Ogranicz do minimum 1
+            val newNumberString = newNumber.toString()
+            val error = validateParticipantsNumber(newNumberString)
+            currentState.copy(
+                participantsNumber = newNumberString,
+                participantsNumberError = error,
+                canBeSaved = canFormBeSaved(
+                    name = currentState.name,
+                    nameError = currentState.nameError,
+                    startDateError = currentState.startDateError,
+                    endDateError = currentState.endDateError,
+                    participantsNumberError = error,
+                )
+            )
+        }
+    }
+
 // --------- Funkcje do zapisu danych formularza ---------
     /**
      * Funkcja pomocnicza do sprawdzania, czy formularz jest gotowy do zapisu
      *
      * @param name - nazwa podróży
      * @param nameError - błąd nazwy podróży
+     * @param startDateError - błąd daty rozpoczęcia
+     * @param endDateError - błąd daty zakończenia
+     * @param participantsNumberError - błąd liczby uczestników
      * @return - Czy formularz jest gotowy do zapisu
      */
     private fun canFormBeSaved(
-        name: String, nameError: Int?, startDateError: Int?, endDateError: Int?
+        name: String, nameError: Int?,
+        startDateError: Int?, endDateError: Int?,
+        participantsNumberError: Int?
     ): Boolean {
         val basicValidation = name.isNotBlank() && nameError == null
         val dateValidation = startDateError == null && endDateError == null
+        val participantsNumberValidation = participantsNumberError == null
 
-        return basicValidation && dateValidation
+        return basicValidation && dateValidation && participantsNumberValidation
     }
 
     /**
@@ -367,17 +470,20 @@ class TripViewModel @Inject constructor(
         val (startDateValError, endDateValError) = validateDates(
             currentState.selectedStartDateMillis, currentState.selectedEndDateMillis
         )
+        val participantsNumberError = validateParticipantsNumber(currentState.participantsNumber)
 
         _addTripFormState.update {
             it.copy(
                 nameError = nameValidationError,
                 startDateError = startDateValError,
                 endDateError = endDateValError,
+                participantsNumberError = participantsNumberError,
                 canBeSaved = canFormBeSaved(
                     name = it.name,
                     nameError = nameValidationError,
                     startDateError = startDateValError,
-                    endDateError = endDateValError
+                    endDateError = endDateValError,
+                    participantsNumberError = participantsNumberError
                 )
             )
         }
@@ -390,6 +496,7 @@ class TripViewModel @Inject constructor(
                         id = currentState.editingTripId ?: 0,
                         name = currentState.name.trim(),
                         destination = currentState.destination.trim(),
+                        participantsNumber = currentState.participantsNumber.toIntOrNull() ?: 1,
                         startDate = currentState.selectedStartDateMillis,
                         endDate = currentState.selectedEndDateMillis,
                         description = currentState.description.trim()
@@ -422,11 +529,14 @@ class TripViewModel @Inject constructor(
 
     fun loadTripForEditing(trip: Trip) {
         val (startDateError, endDateError) = validateDates(trip.startDate, trip.endDate)
+        val participantsNumberError = validateParticipantsNumber(trip.participantsNumber.toString())
         _addTripFormState.update {
             it.copy(
                 editingTripId = trip.id,
                 name = trip.name,
                 destination = trip.destination ?: "",
+                participantsNumber = trip.participantsNumber?.toString() ?: "1",
+                participantsNumberError = participantsNumberError,
                 selectedStartDateMillis = trip.startDate,
                 startDateDisplay = trip.startDate?.let { millis -> dateFormatter.format(Date(millis)) }
                     ?: "",
@@ -441,7 +551,8 @@ class TripViewModel @Inject constructor(
                     name = trip.name,
                     nameError = null,
                     startDateError = startDateError,
-                    endDateError = endDateError
+                    endDateError = endDateError,
+                    participantsNumberError = participantsNumberError
                 ))
         }
     }

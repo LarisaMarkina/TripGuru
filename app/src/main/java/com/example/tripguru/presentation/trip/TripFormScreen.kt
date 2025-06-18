@@ -17,8 +17,10 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -47,7 +49,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.tripguru.R
@@ -325,6 +329,51 @@ fun TripFormScreen(
                             formUiState.endDateError?.let {
                                 Text(
                                     stringResource(it),
+                                    color = MaterialTheme.colorScheme.error
+                                )
+                            }
+                        }
+                    )
+
+                    // Liczba uczestników
+                    OutlinedTextField(
+                        value = formUiState.participantsNumber,
+                        onValueChange = { viewModel.onNumberOfPeopleChanged(it) },
+                        label = { Text(stringResource(R.string.field_trip_number_of_participants)) },
+                        modifier = Modifier.fillMaxWidth(),
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Number,
+                            imeAction = ImeAction.Next
+                        ),
+                        textStyle = TextStyle(textAlign = androidx.compose.ui.text.style.TextAlign.Center),
+                        singleLine = true,
+                        leadingIcon = { // Przycisk "-"
+                            IconButton(
+                                onClick = { viewModel.decrementNumberOfPeople() },
+                                enabled = (formUiState.participantsNumber.toIntOrNull() ?: 1) > 1
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Filled.Remove,
+                                    contentDescription = stringResource(R.string.content_desc_decrement_participants)
+                                )
+                            }
+                        },
+                        trailingIcon = { // Przycisk "+"
+                            IconButton(
+                                onClick = { viewModel.incrementNumberOfPeople() },
+                                enabled = (formUiState.participantsNumber.toIntOrNull() ?: 0) < 200
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Filled.Add,
+                                    contentDescription = stringResource(R.string.content_desc_increment_participants)
+                                )
+                            }
+                        },
+                        isError = formUiState.participantsNumberError != null,
+                        supportingText = {
+                            formUiState.participantsNumberError?.let { errorResId ->
+                                Text(
+                                    text = stringResource(errorResId),
                                     color = MaterialTheme.colorScheme.error
                                 )
                             }

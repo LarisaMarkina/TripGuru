@@ -9,6 +9,7 @@ data class TripEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0L,
     val name: String,
     val destination: String?,
+    val participantsNumber: Int?,
     val startDate: Long?,
     val endDate: Long?,
     val description: String?,
@@ -19,6 +20,7 @@ fun TripEntity.toDomain(): Trip = Trip(
     id = id,
     name = name,
     destination = destination,
+    participantsNumber = participantsNumber,
     startDate = startDate,
     endDate = endDate,
     description = description
@@ -28,6 +30,7 @@ fun Trip.toEntity(): TripEntity = TripEntity(
     id = id,
     name = name,
     destination = destination,
+    participantsNumber = participantsNumber,
     startDate = startDate,
     endDate = endDate,
     description = description

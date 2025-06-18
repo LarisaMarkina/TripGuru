@@ -226,6 +226,16 @@ fun TripDetailsContent(trip: Trip) {
             Text(stringResource(R.string.label_trip_dates, dateStartDisplay, dateEndDisplay))
         }
 
+        // Liczba uczestników
+        if (trip.participantsNumber != null) {
+            Text(
+                stringResource(
+                    R.string.label_trip_number_of_participants,
+                    trip.participantsNumber
+                )
+            )
+        }
+
         // Opis podróży
         if (!isEmpty(trip.description)) {
             Spacer(modifier = Modifier.height(4.dp))

@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="title_my_trips">Мои путешествия</string>
+    <string name="field_trip_number_of_participants">Число участников</string>
     <string name="button_label_add_trip_content">Новое путешествие</string>
     <string name="label_trip_dates">С: %1$  по: %2$s</string>
     <string name="label_trip_destination">Цель: %1$s</string>
     <string name="button_label_save">Сохранить</string>
+    <string name="label_trip_number_of_participants">Число участников: %1$s</string>
     <string name="field_trip_name">Название путешествия</string>
     <string name="field_trip_destination">Цель</string>
     <string name="field_trip_description">Описание</string>
@@ -15,6 +17,8 @@
     <string name="msg_error_saving_trip">Ошибка при сохранении путешествия!</string>
     <string name="msg_success_trip_saved">Путешествие сохранено!</string>
     <string name="msg_error_unknown">Неизвестная ошибка!</string>
+    <string name="msg_error_invalid_number_format">Это поле не может быть пустым!</string>
+    <string name="msg_error_number_of_participants_too_low">В поездке должен быть хотя бы 1 участник!</string>
     <string name="content_desc_select_start_date">Выбери дату начала путешествия</string>
     <string name="field_trip_date_end">Дата завершения путешествия</string>
     <string name="field_trip_date_start">Дата начала путешествия</string>
@@ -27,6 +31,8 @@
     <string name="title_trip_details">Детали путешествия</string>
     <string name="content_desc_menu">Меню</string>
     <string name="button_label_delete">Удалить</string>
+    <string name="content_desc_decrement_participants">Удалт участника</string>
+    <string name="content_desc_increment_participants">Добавь участника</string>
     <string name="dialog_title_confirm_delete">Подтверждение удаления</string>
     <string name="dialog_text_confirm_delete">Вы уверены, что хотите удалить путешествие?</string>
     <string name="msg_success_trip_deleted">Путешествие удалено!</string>

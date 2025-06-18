@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="title_my_trips">Moje podróże</string>
+    <string name="field_trip_number_of_participants">Liczba uczestników</string>
     <string name="button_label_add_trip_content">Nowa podróż</string>
     <string name="label_trip_dates">Od: %1$s do: %2$s</string>
     <string name="label_trip_destination">Cel: %1$s</string>
     <string name="button_label_save">Zapisz</string>
+    <string name="label_trip_number_of_participants">Liczba uczestników: %1$s</string>
     <string name="field_trip_name">Nazwa podróży</string>
     <string name="field_trip_destination">Cel</string>
     <string name="field_trip_description">Opis</string>
@@ -15,6 +17,7 @@
     <string name="msg_error_saving_trip">Błąd zapisu podróży!</string>
     <string name="msg_success_trip_saved">Podróż pomyślnie zapisana!</string>
     <string name="msg_error_unknown">Nieznany błąd!</string>
+    <string name="msg_error_number_of_participants_too_low">W podróży powinien być przynajmniej 1 uczestnik!</string>
     <string name="content_desc_select_start_date">Wybierz datę początku</string>
     <string name="field_trip_date_end">Data zakończenia podróży</string>
     <string name="field_trip_date_start">Data rozpoczęcia podróży</string>
@@ -27,7 +30,10 @@
     <string name="title_trip_details">Szczegóły podróży</string>
     <string name="content_desc_menu">Menu</string>
     <string name="button_label_delete">Usuń</string>
+    <string name="content_desc_increment_participants">Dodaj uczestnika</string>
     <string name="dialog_title_confirm_delete">Potwierdzenie usuwania</string>
     <string name="dialog_text_confirm_delete">Jesteś pewien, że chcesz usunąć podróż?</string>
     <string name="msg_success_trip_deleted">Podróż została usunięta!</string>
+    <string name="msg_error_invalid_number_format">To pole nie może być puste!</string>
+    <string name="content_desc_decrement_participants">Odejmij uczestnika</string>
 </resources>
