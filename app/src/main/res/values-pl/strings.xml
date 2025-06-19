@@ -18,6 +18,7 @@
     <string name="msg_success_trip_saved">Podróż pomyślnie zapisana!</string>
     <string name="msg_error_unknown">Nieznany błąd!</string>
     <string name="msg_error_number_of_participants_too_low">W podróży powinien być przynajmniej 1 uczestnik!</string>
+    <string name="msg_error_invalid_day_for_month">Data jest niepoprawna!</string>
     <string name="content_desc_select_start_date">Wybierz datę początku</string>
     <string name="field_trip_date_end">Data zakończenia podróży</string>
     <string name="field_trip_date_start">Data rozpoczęcia podróży</string>
@@ -36,4 +37,6 @@
     <string name="msg_success_trip_deleted">Podróż została usunięta!</string>
     <string name="msg_error_invalid_number_format">To pole nie może być puste!</string>
     <string name="content_desc_decrement_participants">Odejmij uczestnika</string>
+    <string name="msg_error_incomplete_date">Data jest niepełna!</string>
+    <string name="msg_error_invalid_date_format">Niepoprawny format daty!</string>
 </resources>

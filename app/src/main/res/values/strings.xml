@@ -37,6 +37,9 @@
     <string name="msg_success_trip_deleted">The trip has been deleted</string>
     <string name="msg_error_invalid_number_format">This field cannot be empty!</string>
     <string name="msg_error_number_of_participants_too_low">There should be at least 1 participant on the trip!!</string>
+    <string name="msg_error_incomplete_date">Date is not complete!</string>
+    <string name="msg_error_invalid_date_format">Invalid date format!</string>
+    <string name="msg_error_invalid_day_for_month">This date is not correct!</string>
 
     <!-- Content description -->
     <string name="content_desc_select_start_date">Select trip start date</string>

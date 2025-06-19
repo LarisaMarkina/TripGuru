@@ -19,9 +19,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
 
@@ -87,8 +85,6 @@ class TripViewModel @Inject constructor(
     private val _eventFlow = MutableSharedFlow<AddTripEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
 
-    private val dateFormatter = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
-
 
 // --------- Funkcje do aktualizacji stanu formularza ---------
     /**
@@ -133,17 +129,31 @@ class TripViewModel @Inject constructor(
     /**
      * Funkcja, reagująca na zmianę daty początku podróży
      *
-     * @param dateMillis - data początku podróży w ms (UNIX)
+     * @param year - rok
+     * @param month - miesiąc
+     * @param dayOfMonth - dzień
      */
-    fun onStartDateSelected(dateMillis: Long) {
-        val formattedDate = dateFormatter.format(Date(dateMillis))
+    fun onStartDateSelected(year: Int, month: Int, dayOfMonth: Int) {
+        val calendar = Calendar.getInstance().apply {
+            set(year, month, dayOfMonth, 0, 0, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
+        val dateMillis = calendar.timeInMillis
+        val dateDigits = String.format(
+            Locale.getDefault(),
+            "%02d%02d%04d",
+            dayOfMonth,
+            month + 1,
+            year
+        ) // Format ddmmyyyy
+
         _addTripFormState.update { currentState ->
             val endDateMillis = currentState.selectedEndDateMillis
             val startDateValError = validateSpecificDate(dateMillis, endDateMillis, true)
             val endDateValError = validateSpecificDate(endDateMillis, dateMillis, false)
 
             currentState.copy(
-                startDateDisplay = formattedDate,
+                startDateDisplay = dateDigits,
                 selectedStartDateMillis = dateMillis,
                 startDateError = startDateValError,
                 endDateError = endDateValError,
@@ -159,27 +169,97 @@ class TripViewModel @Inject constructor(
     }
 
     /**
-     * Funkcja, reagująca na zmianę daty końca podróży
+     * Funkcja, reagująca na wybranie daty końca podróży
      *
-     * @param dateMillis - data końca podróży w ms (UNIX)
+     * @param year - rok
+     * @param month - miesiąc
+     * @param dayOfMonth - dzień
      */
-    fun onEndDateSelected(dateMillis: Long) {
-        val formattedDate = dateFormatter.format(Date(dateMillis))
+    fun onEndDateSelected(year: Int, month: Int, dayOfMonth: Int) {
+        val calendar = Calendar.getInstance().apply {
+            set(year, month, dayOfMonth, 0, 0, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
+        val dateMillis = calendar.timeInMillis
+        val dateDigits = String.format(
+            Locale.getDefault(),
+            "%02d%02d%04d",
+            dayOfMonth,
+            month + 1,
+            year
+        ) // Format ddmmyyyy
+
         _addTripFormState.update { currentState ->
             val startDateMillis = currentState.selectedStartDateMillis
             val endDateValError = validateSpecificDate(dateMillis, startDateMillis, false)
             val startDateValError = validateSpecificDate(startDateMillis, dateMillis, true)
 
             currentState.copy(
-                endDateDisplay = formattedDate,
+                endDateDisplay = dateDigits,
                 selectedEndDateMillis = dateMillis,
-                endDateError = endDateValError,
                 startDateError = startDateValError,
+                endDateError = endDateValError,
                 canBeSaved = canFormBeSaved(
                     name = currentState.name,
                     nameError = currentState.nameError,
                     startDateError = startDateValError,
                     endDateError = endDateValError,
+                    participantsNumberError = currentState.participantsNumberError
+                )
+            )
+        }
+    }
+
+    /**
+     * Funkcja, reagująca na wpisanie daty początku podróży
+     *
+     * @param dateDigits - data w formacie ddmmyyyy
+     */
+    fun onStartDateChanged(dateDigits: String) {
+        _addTripFormState.update { currentState ->
+            val (newMillis, error) = parseDateDigits(dateDigits)
+            val endDateMillis = currentState.selectedEndDateMillis
+            val startDateValError = validateSpecificDate(newMillis, endDateMillis, true)
+            val endDateValError = validateSpecificDate(endDateMillis, newMillis, false)
+
+            currentState.copy(
+                startDateDisplay = dateDigits,
+                selectedStartDateMillis = newMillis,
+                startDateError = error ?: startDateValError,
+                endDateError = endDateValError,
+                canBeSaved = canFormBeSaved(
+                    name = currentState.name,
+                    nameError = currentState.nameError,
+                    startDateError = error ?: startDateValError,
+                    endDateError = endDateValError,
+                    participantsNumberError = currentState.participantsNumberError
+                )
+            )
+        }
+    }
+
+    /**
+     * Funkcja, reagująca na wpisanie daty końca podróży
+     *
+     * @param dateDigits - data w formacie ddmmyyyy
+     */
+    fun onEndDateChanged(dateDigits: String) {
+        _addTripFormState.update { currentState ->
+            val (newMillis, error) = parseDateDigits(dateDigits)
+            val startDateMillis = currentState.selectedStartDateMillis
+            val endDateValError = validateSpecificDate(newMillis, startDateMillis, false)
+            val startDateValError = validateSpecificDate(startDateMillis, newMillis, true)
+
+            currentState.copy(
+                endDateDisplay = dateDigits,
+                selectedEndDateMillis = newMillis,
+                startDateError = startDateValError,
+                endDateError = error ?: endDateValError,
+                canBeSaved = canFormBeSaved(
+                    name = currentState.name,
+                    nameError = currentState.nameError,
+                    startDateError = startDateValError,
+                    endDateError = error ?: endDateValError,
                     participantsNumberError = currentState.participantsNumberError
                 )
             )
@@ -294,6 +374,50 @@ class TripViewModel @Inject constructor(
     }
 
     /**
+     * Funkcja pomocnicza do parsowania i walidacji dat
+     *
+     * @param dateDigits - data w formacie ddmmyyyy
+     * @return
+     */
+    private fun parseDateDigits(dateDigits: String): Pair<Long?, Int?> {
+        if (dateDigits.length < 8) { // Niepełna data
+            return Pair(
+                null,
+                if (dateDigits.isNotBlank()) R.string.msg_error_incomplete_date else null
+            )
+        }
+
+        try {
+            val day = dateDigits.substring(0, 2).toInt()
+            val month = dateDigits.substring(2, 4).toInt()
+            val year = dateDigits.substring(4, 8).toInt()
+
+            if (month < 1 || month > 12 || day < 1 || day > 31 || year < 1900 || year > 2100) {
+                return Pair(null, R.string.msg_error_invalid_date_format)
+            }
+
+            val calendar = Calendar.getInstance().apply {
+                set(Calendar.YEAR, year)
+                set(Calendar.MONTH, month - 1)
+                val maxDayInMonth = getActualMaximum(Calendar.DAY_OF_MONTH)
+                if (day > maxDayInMonth) {
+                    return Pair(null, R.string.msg_error_invalid_day_for_month)
+                }
+                set(Calendar.DAY_OF_MONTH, day)
+                set(Calendar.HOUR_OF_DAY, 0)
+                set(Calendar.MINUTE, 0)
+                set(Calendar.SECOND, 0)
+                set(Calendar.MILLISECOND, 0)
+            }
+            val newMillis = calendar.timeInMillis
+
+            return Pair(newMillis, null) // Sukces
+        } catch (_: Exception) {
+            return Pair(null, R.string.msg_error_invalid_date_format)
+        }
+    }
+
+    /**
      * Funkcja pomocnicza do walidacji liczby uczestników podróży
      *
      * @param participantsNumber - liczba uczestników podróży
@@ -334,6 +458,24 @@ class TripViewModel @Inject constructor(
                 )
             )
         }
+    }
+
+    /**
+     * Funkcja, formatująca datę do wyświetlenia w UI millis
+     *
+     * @param millis
+     * @param format
+     * @return
+     */
+    fun formatDateMillis(millis: Long?, format: String = "%02d%02d%04d"): String {
+        if (millis == null) {
+            return ""
+        }
+        val calendar = Calendar.getInstance().apply { timeInMillis = millis }
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+        val month = calendar.get(Calendar.MONTH) + 1
+        val year = calendar.get(Calendar.YEAR)
+        return String.format(Locale.getDefault(), format, day, month, year)
     }
 
     /**
@@ -523,13 +665,28 @@ class TripViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Funkcja, sprawdzająca, czy edytowana jest istniejąca podróż
+     *
+     * @return
+     */
     private fun isEditingExistingTrip(): Boolean {
         return _addTripFormState.value.editingTripId != null
     }
 
+
+    /**
+     * Funkcja, ładująca dane podróży do edycji
+     *
+     * @param trip - podróż
+     */
     fun loadTripForEditing(trip: Trip) {
         val (startDateError, endDateError) = validateDates(trip.startDate, trip.endDate)
         val participantsNumberError = validateParticipantsNumber(trip.participantsNumber.toString())
+
+        val initialStartDateDisplay = formatDateMillis(trip.startDate)
+        val initialEndDateDisplay = formatDateMillis(trip.endDate)
+
         _addTripFormState.update {
             it.copy(
                 editingTripId = trip.id,
@@ -538,11 +695,9 @@ class TripViewModel @Inject constructor(
                 participantsNumber = trip.participantsNumber?.toString() ?: "1",
                 participantsNumberError = participantsNumberError,
                 selectedStartDateMillis = trip.startDate,
-                startDateDisplay = trip.startDate?.let { millis -> dateFormatter.format(Date(millis)) }
-                    ?: "",
+                startDateDisplay = initialStartDateDisplay,
                 selectedEndDateMillis = trip.endDate,
-                endDateDisplay = trip.endDate?.let { millis -> dateFormatter.format(Date(millis)) }
-                    ?: "",
+                endDateDisplay = initialEndDateDisplay,
                 description = trip.description ?: "",
                 startDateError = startDateError,
                 endDateError = endDateError,
@@ -553,7 +708,8 @@ class TripViewModel @Inject constructor(
                     startDateError = startDateError,
                     endDateError = endDateError,
                     participantsNumberError = participantsNumberError
-                ))
+                )
+            )
         }
     }
 
@@ -567,10 +723,18 @@ class TripViewModel @Inject constructor(
         _selectedTripId.value = tripId
     }
 
+    /**
+     * Czyści wybraną podróż
+     *
+     */
     fun clearSelectedTrip() {
         _selectedTripId.value = null
     }
 
+    /**
+     * Ładuje listę podróży
+     *
+     */
     fun loadTrips() {
         viewModelScope.launch {
             tripUseCases.getTrips().collect {
@@ -579,6 +743,11 @@ class TripViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Usuwa podróż
+     *
+     * @param trip - podróż
+     */
     fun deleteTrip(trip: Trip) {
         viewModelScope.launch {
             tripUseCases.deleteTrip(trip)

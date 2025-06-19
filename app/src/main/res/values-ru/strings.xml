@@ -19,6 +19,7 @@
     <string name="msg_error_unknown">Неизвестная ошибка!</string>
     <string name="msg_error_invalid_number_format">Это поле не может быть пустым!</string>
     <string name="msg_error_number_of_participants_too_low">В поездке должен быть хотя бы 1 участник!</string>
+    <string name="msg_error_invalid_day_for_month">Неправильная дата!</string>
     <string name="content_desc_select_start_date">Выбери дату начала путешествия</string>
     <string name="field_trip_date_end">Дата завершения путешествия</string>
     <string name="field_trip_date_start">Дата начала путешествия</string>
@@ -36,4 +37,6 @@
     <string name="dialog_title_confirm_delete">Подтверждение удаления</string>
     <string name="dialog_text_confirm_delete">Вы уверены, что хотите удалить путешествие?</string>
     <string name="msg_success_trip_deleted">Путешествие удалено!</string>
+    <string name="msg_error_incomplete_date">Неполная дата!</string>
+    <string name="msg_error_invalid_date_format">Неправильный формат даты!</string>
 </resources>

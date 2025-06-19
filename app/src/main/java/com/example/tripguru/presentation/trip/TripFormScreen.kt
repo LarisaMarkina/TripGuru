@@ -56,8 +56,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.tripguru.R
 import com.example.tripguru.presentation.composables.rememberDatePickerDialog
+import com.example.tripguru.presentation.utils.DateVisualTransformation
 import java.util.Calendar
-import java.util.TimeZone
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
@@ -95,11 +95,7 @@ fun TripFormScreen(
     val startDatePickerDialog = rememberDatePickerDialog(
         initialDate = viewModel.getInitialCalendarForDatePicker(formUiState.selectedStartDateMillis),
         onDateSelected = { year, month, dayOfMonth ->
-            val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC")).apply {
-                clear()
-                set(year, month, dayOfMonth)
-            }
-            viewModel.onStartDateSelected(calendar.timeInMillis)
+            viewModel.onStartDateSelected(year, month, dayOfMonth)
             showStartDatePicker = false
         },
         onDismiss = { showStartDatePicker = false }
@@ -108,11 +104,7 @@ fun TripFormScreen(
     val endDatePickerDialog = rememberDatePickerDialog(
         initialDate = viewModel.getInitialCalendarForDatePicker(formUiState.selectedEndDateMillis),
         onDateSelected = { year, month, dayOfMonth ->
-            val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC")).apply {
-                clear()
-                set(year, month, dayOfMonth)
-            }
-            viewModel.onEndDateSelected(calendar.timeInMillis)
+            viewModel.onEndDateSelected(year, month, dayOfMonth)
             showEndDatePicker = false
         },
         onDismiss = { showEndDatePicker = false }
@@ -246,15 +238,25 @@ fun TripFormScreen(
                     // Data rozpoczęcia
                     OutlinedTextField(
                         value = formUiState.startDateDisplay,
-                        onValueChange = {},
+                        onValueChange = { newValue ->
+                            val digitsOnly = newValue.filter { it.isDigit() }
+                            if (digitsOnly.length <= 8) {
+                                viewModel.onStartDateChanged(digitsOnly)
+                            }
+                        },
                         label = { Text(stringResource(R.string.field_trip_date_start)) },
-                        readOnly = true,
+                        readOnly = false,
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
                                 focusManager.clearFocus()
                                 showStartDatePicker = true
                             },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Number,
+                            imeAction = ImeAction.Next
+                        ),
+                        visualTransformation = DateVisualTransformation(),
                         trailingIcon = {
                             Row {
                                 // Usuń datę
@@ -292,15 +294,25 @@ fun TripFormScreen(
                     // Data zakończenia
                     OutlinedTextField(
                         value = formUiState.endDateDisplay,
-                        onValueChange = {},
+                        onValueChange = { newValue ->
+                            val digitsOnly = newValue.filter { it.isDigit() }
+                            if (digitsOnly.length <= 8) {
+                                viewModel.onEndDateChanged(digitsOnly)
+                            }
+                        },
                         label = { Text(stringResource(R.string.field_trip_date_end)) },
-                        readOnly = true,
+                        readOnly = false,
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
                                 focusManager.clearFocus()
                                 showEndDatePicker = true
                             },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Number,
+                            imeAction = ImeAction.Next
+                        ),
+                        visualTransformation = DateVisualTransformation(),
                         trailingIcon = {
                             Row {
                                 // Usuń datę
